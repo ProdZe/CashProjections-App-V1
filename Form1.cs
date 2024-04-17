@@ -25,8 +25,8 @@ namespace Projections_App_V1
            //Method for Dateblock edit
             void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
             {
-                // Check if the edit is in the DateBlock column
-                if (e.ColumnIndex == dataGridView1.Columns["DateBlock"].Index)
+                // Check if the edit is in the Input Date column
+                if (e.ColumnIndex == dataGridView1.Columns["Input Date"].Index)
                 {
                     // Cancel the edit operation
                     e.Cancel = true;
@@ -35,10 +35,10 @@ namespace Projections_App_V1
 
 
 
-            //defining what to do on cell click in DateBlock
+            //defining what to do on cell click in Input Date
             void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
             {
-                if (e.ColumnIndex == dataGridView1.Columns["DateBlock"].Index && e.RowIndex >= 0)
+                if (e.ColumnIndex == dataGridView1.Columns["Input Date"].Index && e.RowIndex >= 0)
                 {
                     // Initialize a new DateTimePicker control
                     DateTimePicker picker = new DateTimePicker();
@@ -76,12 +76,12 @@ namespace Projections_App_V1
 
             DataTable dataTable = new DataTable();
             dataTable.Columns.Add("StartingBalance", typeof(decimal));
-            dataTable.Columns.Add("ChargeBlock", typeof(decimal));
-            dataTable.Columns.Add("RemainingBlock", typeof(decimal));
-            dataTable.Columns.Add("DateBlock", typeof(DateTime));
+            dataTable.Columns.Add("Charged Amnt", typeof(decimal));
+            dataTable.Columns.Add("Remaining Bal.", typeof(decimal));
+            dataTable.Columns.Add("Input Date", typeof(DateTime));
             foreach (DataRow row in dataTable.Rows)
             {
-                row["RemainingBlock"] = DBNull.Value; // Sets the initial value to be blank
+                row["Remaining Bal."] = DBNull.Value; // Sets the initial value to be blank
             }
 
             dataTable.Rows.Add(DBNull.Value, DBNull.Value, DBNull.Value);
@@ -95,17 +95,17 @@ namespace Projections_App_V1
                 // Ensure the columns exist before attempting to format them
                 if (dataGridView1.Columns.Contains("StartingBalance"))
                     dataGridView1.Columns["StartingBalance"].DefaultCellStyle.Format = "C2";
-                if (dataGridView1.Columns.Contains("ChargeBlock"))
-                    dataGridView1.Columns["ChargeBlock"].DefaultCellStyle.Format = "C2";
-                if (dataGridView1.Columns.Contains("RemainingBlock"))
-                    dataGridView1.Columns["RemainingBlock"].DefaultCellStyle.Format = "C2";
-                    dataGridView1.Columns["DateBlock"].DefaultCellStyle.Format = "d"; // Short date pattern
+                if (dataGridView1.Columns.Contains("Charged Amnt"))
+                    dataGridView1.Columns["Charged Amnt"].DefaultCellStyle.Format = "C2";
+                if (dataGridView1.Columns.Contains("Remaining Bal."))
+                    dataGridView1.Columns["Remaining Bal."].DefaultCellStyle.Format = "C2";
+                    dataGridView1.Columns["Input Date"].DefaultCellStyle.Format = "d"; // Short date pattern
 
             }
             //adding datasource to datatable as defined above
             //Making remaining/starting balance blocks read only
             dataGridView1.DataSource = dataTable;
-            dataGridView1.Columns["RemainingBlock"].ReadOnly = true;
+            dataGridView1.Columns["Remaining Bal."].ReadOnly = true;
             dataGridView1.Columns["StartingBalance"].ReadOnly = true;
 
             //logic for data change in a cell
@@ -115,8 +115,8 @@ namespace Projections_App_V1
             //trying to get text box to update the starting balance here
            void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
             {
-                // If the change is in the ChargeBlock column, update balances.
-                if (e.ColumnIndex == dataGridView1.Columns["ChargeBlock"].Index)
+                // If the change is in the Charged Amnt column, update balances.
+                if (e.ColumnIndex == dataGridView1.Columns["Charged Amnt"].Index)
                 {
                     UpdateBalances();
                 }
@@ -131,13 +131,13 @@ namespace Projections_App_V1
         private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             // Math implementation
-            if (e.ColumnIndex == 0 || e.ColumnIndex == 1) // Assuming columns 0 and 1 are StartingBalance and ChargeBlock
+            if (e.ColumnIndex == 0 || e.ColumnIndex == 1) // Assuming columns 0 and 1 are StartingBalance and Charged Amnt
             {
                 var row = dataGridView1.Rows[e.RowIndex];
                 if (int.TryParse(row.Cells["StartingBalance"].Value?.ToString(), out int startingBalance) &&
-                    int.TryParse(row.Cells["ChargeBlock"].Value?.ToString(), out int chargeBlock))
+                    int.TryParse(row.Cells["Charged Amnt"].Value?.ToString(), out int chargeBlock))
                 {
-                    row.Cells["RemainingBlock"].Value = startingBalance - chargeBlock;
+                    row.Cells["Remaining Bal."].Value = startingBalance - chargeBlock;
                 }
             }
         }
@@ -163,7 +163,7 @@ namespace Projections_App_V1
 
                 // Assuming the user inputs the charge amount
                 decimal chargeAmount = 0m;
-                if (decimal.TryParse((row.Cells["ChargeBlock"].Value ?? "0").ToString(), out chargeAmount))
+                if (decimal.TryParse((row.Cells["Charged Amnt"].Value ?? "0").ToString(), out chargeAmount))
                 {
                     // Set the starting balance for the current row
                     if (row.Index == 0 || dataGridView1.Rows.Count == 1) // Check if it's the first row or there's only one row
@@ -177,7 +177,7 @@ namespace Projections_App_V1
 
                     // Calculate the remaining balance for the current row
                     currentBalance -= chargeAmount;
-                    row.Cells["RemainingBlock"].Value = currentBalance;
+                    row.Cells["Remaining Bal."].Value = currentBalance;
                 }
             }
         }
@@ -209,8 +209,8 @@ namespace Projections_App_V1
 
             // Initialize columns in your DataTable if necessary
             dataTable.Columns.Add("StartingBalance", typeof(decimal));
-            dataTable.Columns.Add("ChargeBlock", typeof(decimal));
-            dataTable.Columns.Add("RemainingBlock", typeof(decimal));
+            dataTable.Columns.Add("Charged Amnt", typeof(decimal));
+            dataTable.Columns.Add("Remaining Bal.", typeof(decimal));
 
             // Read the CSV file line by line
             string[] lines = System.IO.File.ReadAllLines(filePath);
@@ -221,8 +221,8 @@ namespace Projections_App_V1
                 string[] fields = lines[i].Split(',');
                 DataRow row = dataTable.NewRow();
                 row["StartingBalance"] = int.Parse(fields[0]);
-                row["ChargeBlock"] = int.Parse(fields[1]);
-                row["RemainingBlock"] = int.Parse(fields[2]); // Adjust this based on your actual CSV structure and data types
+                row["Charged Amnt"] = int.Parse(fields[1]);
+                row["Remaining Bal."] = int.Parse(fields[2]); // Adjust this based on your actual CSV structure and data types
                 dataTable.Rows.Add(row);
             }
 
@@ -233,8 +233,9 @@ namespace Projections_App_V1
             DataTable dataTable = dataGridView1.DataSource as DataTable;
             if (dataTable != null)
             {
-                dataTable.DefaultView.Sort = "DateBlock ASC"; // Sorts the rows in ascending order by the DateBlock column
+                dataTable.DefaultView.Sort = "Input Date ASC"; // Sorts the rows in ascending order by the Input Date column
                 dataGridView1.DataSource = dataTable.DefaultView.ToTable();
+                UpdateBalances();
             }
         }
     }
