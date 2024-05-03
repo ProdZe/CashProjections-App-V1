@@ -20,7 +20,7 @@ namespace Projections_App_V1
             dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
             dataGridView1.CellBeginEdit += dataGridView1_CellBeginEdit;
             dataGridView1.CellEndEdit += (s, e) => dataGridView1.CommitEdit(DataGridViewDataErrorContexts.Commit);
-            dataGridView1.CellClick += dataGridView1_CellClick;
+            dataGridView1.CellDoubleClick += dataGridView1_CellClick;
 
            //Method for Dateblock edit
             void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
@@ -66,6 +66,7 @@ namespace Projections_App_V1
                     picker.Leave += (s, args) => picker.Visible = false;
                 }
             }
+            //Adding Save option
 
             //row and font setup below
             dataGridView1.RowTemplate.Height = 32; // Adjust the value as needed for row height
@@ -185,6 +186,7 @@ namespace Projections_App_V1
 
         //Trying to save the data to csv so user can use it again
         //Need to add button so they can save there is no File Save option or header
+
         private void SaveDataTableToCsv(DataTable dataTable, string filePath)
         {
             StringBuilder csvContent = new StringBuilder();
